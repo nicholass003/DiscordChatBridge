@@ -1,4 +1,4 @@
 branches:
   - poggit/main
 projects:
-  ChoosePlayer: {}
+  DiscordChatBridge: {}

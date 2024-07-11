@@ -1,1 +1,4 @@
-{"projects":{"DiscordChatBridge":{"path":".","lint":false}}}
+branches:
+  - poggit/main
+projects:
+  ChoosePlayer: {}

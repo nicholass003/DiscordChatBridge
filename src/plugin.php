@@ -83,7 +83,7 @@ final class DiscordChatBridge extends PluginBase implements Listener{
 
 	public static function sendLog(string $message) : void{
 		$data = [
-			'content' => $message,
+			'content' => str_replace("@", "@​", $message),
 		];
 		Server::getInstance()->getAsyncPool()->submitTask(new BulkCurlTask(
 			[

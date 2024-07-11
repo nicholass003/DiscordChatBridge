@@ -1,0 +1,12 @@
+# DiscordChatBridge Configuration #
+# Setup Webhook URL
+webhook-url: webhook_url_here
+# Setup Discord Channel ID
+channel-id: channel_id_here
+# Setup Discord Authorization
+authorization: auth_here
+# Webhook Integration Name
+webhook-name: webhook_name_here
+# Set Tick checks, default is 20 tick, 20 tick equals to 1 seconds
+# Warning don't set under 10 tick
+tick: 20

@@ -1,8 +1,0 @@
---- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/nicholass003/DiscordChatBridge
-build-by-default: true
-branches:
-- poggit/main
-projects:
-  DiscordChatBridge:
-    path: ""
-...

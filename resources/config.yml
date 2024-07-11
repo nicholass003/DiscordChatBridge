@@ -10,3 +10,5 @@ webhook-name: webhook_name_here
 # Set Tick checks, default is 20 tick, 20 tick equals to 1 seconds
 # Warning don't set under 10 tick
 tick: 20
+# Discord message format
+bc-message: "[Discord] {name} > {message}"

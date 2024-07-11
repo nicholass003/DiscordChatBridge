@@ -32,6 +32,7 @@ use pocketmine\scheduler\BulkCurlTaskOperation;
 use pocketmine\Server;
 use pocketmine\utils\InternetException;
 use pocketmine\utils\InternetRequestResult;
+use pocketmine\utils\SingletonTrait;
 use function json_decode;
 use function json_encode;
 use function str_contains;
@@ -43,6 +44,7 @@ use const CURLOPT_POST;
 use const CURLOPT_POSTFIELDS;
 
 final class DiscordChatBridge extends PluginBase implements Listener{
+	use SingletonTrait;
 
 	private static array $discordData = [];
 	private static array $timestamp = [];
@@ -53,6 +55,7 @@ final class DiscordChatBridge extends PluginBase implements Listener{
 	private const WEBHOOK_NAME = 'webhook-name';
 
 	protected function onEnable() : void{
+		self::setInstance($this);
 		self::$discordData = [
 			self::WEBHOOK_URL => $this->getConfig()->get(self::WEBHOOK_URL),
 			self::CHANNEL_ID => $this->getConfig()->get(self::CHANNEL_ID),
@@ -145,7 +148,8 @@ final class DiscordChatBridge extends PluginBase implements Listener{
 
 				self::$timestamp[0] = $data[0]['timestamp'];
 
-				Server::getInstance()->broadcastMessage("[Discord] " . str_replace(" ", "_", $data[0]['author']['username']) . " > " . $data[0]['content']);
+				$message = str_replace(["{name}", "{message}"], [str_replace(" ", "_", $data[0]['author']['username']), (string) $data[0]['content']], DiscordChatBridge::getInstance()->getConfig()->get("bc-message", "[Discord] {name} > {message}"));
+				Server::getInstance()->broadcastMessage($message);
 			}
 		));
 	}

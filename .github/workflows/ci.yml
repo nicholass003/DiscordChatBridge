@@ -35,7 +35,7 @@ jobs:
         with:
           php-version: ${{matrix.php}}
           install-path: "../bin"
-      - uses: SOF3/pharynx@v0.3.6
+      - uses: SOF3/pharynx@v0.2
         id: pharynx
 
       - name: Setup staging branch

@@ -108,7 +108,7 @@ final class DiscordChatBridge extends PluginBase implements Listener{
 				$result = $results[0];
 				/** @var InternetRequestResult|InternetException $result*/
 				if($result instanceof InternetException){
-					$this->getLogger()->error($result->getMessage());
+					DiscordChatBridge::getInstance()->getLogger()->error($result->getMessage());
 				}
 			}
 		));
@@ -135,7 +135,7 @@ final class DiscordChatBridge extends PluginBase implements Listener{
 				$result = $results[0];
 				/** @var InternetRequestResult|InternetException $result*/
 				if($result instanceof InternetException){
-					$this->getLogger()->error($result->getMessage());
+					DiscordChatBridge::getInstance()->getLogger()->error($result->getMessage());
 				}
 
 				$result = $result->getBody();

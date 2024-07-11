@@ -1,0 +1,69 @@
+name: CI
+on:
+  - push
+  - pull_request
+jobs:
+  build-php:
+    name: Prepare PHP
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php: [8.2.3]
+    steps:
+      - name: Build and prepare PHP cache
+        uses: pmmp/setup-php-action@main
+        with:
+          php-version: ${{ matrix.php }}
+          install-path: "../bin"
+
+  pharynx:
+    name: build phar
+    permissions:
+      contents: write
+    concurrency:
+      group: pharynx/${{github.ref}}
+    needs: [build-php]
+    runs-on: ubuntu-20.04
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    strategy:
+      matrix:
+        php:
+          - "8.2.3"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pmmp/setup-php-action@main
+        with:
+          php-version: ${{matrix.php}}
+          install-path: "../bin"
+      - uses: SOF3/pharynx@v0.3.6
+        id: pharynx
+
+      - name: Setup staging branch
+        run: |
+          git fetch origin
+          if ! git checkout poggit-staging; then
+            git checkout --orphan poggit-staging
+            echo <<EOF >.poggit.yml
+          branches: poggit-staging
+          projects:
+            ${{github.repository}}:
+              type: plugin
+              compressBuilds: false
+              fullGzip: false
+          EOF
+          fi
+          mv .poggit.yml /tmp/.poggit.yml
+          git rm -fr .
+          git clean -dxff
+          mv /tmp/.poggit.yml .poggit.yml
+      - name: Create commit
+        run: |
+          cp ${{steps.pharynx.outputs.output-phar}} DiscordChatBridge.phar
+          cp -r ${{steps.pharynx.outputs.output-dir}}/* .
+          git add -A
+          git \
+            -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -am "${{github.event.head_commit.message}} (${{github.sha}})"
+      - name: Push commit
+        run: git push -u origin poggit-staging

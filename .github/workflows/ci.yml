@@ -41,10 +41,10 @@ jobs:
       - name: Setup staging branch
         run: |
           git fetch origin
-          if ! git checkout poggit-staging; then
-            git checkout --orphan poggit-staging
+          if ! git checkout poggit/main; then
+            git checkout --orphan poggit/main
             echo <<EOF >.poggit.yml
-          branches: poggit-staging
+          branches: poggit/main
           projects:
             ${{github.repository}}:
               type: plugin
@@ -66,4 +66,4 @@ jobs:
             -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
             commit -am "${{github.event.head_commit.message}} (${{github.sha}})"
       - name: Push commit
-        run: git push -u origin poggit-staging
+        run: git push -u origin poggit/main

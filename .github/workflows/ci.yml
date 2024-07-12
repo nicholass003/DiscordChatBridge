@@ -37,6 +37,9 @@ jobs:
           install-path: "../bin"
       - uses: SOF3/pharynx@v0.2
         id: pharynx
+        with:
+          additional-assets: |
+            assets/icon.png
 
       - name: Setup staging branch
         run: |

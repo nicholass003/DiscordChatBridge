@@ -56,7 +56,6 @@ jobs:
           EOF
           fi
           mv .poggit.yml /tmp/.poggit.yml
-          git checkout origin/main -- LICENSE
           mv LICENSE /tmp/LICENSE
           git rm -fr .
           git clean -dxff

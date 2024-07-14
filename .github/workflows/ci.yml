@@ -1,9 +1,7 @@
 name: CI
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  - push
+  - pull_request
 jobs:
   build-php:
     name: Prepare PHP
@@ -33,8 +31,6 @@ jobs:
           - "8.2"
     steps:
       - uses: actions/checkout@v3
-      - name: Backup LICENSE file
-        run: cp LICENSE /tmp/LICENSE
       - uses: pmmp/setup-php-action@main
         with:
           php-version: ${{matrix.php}}
@@ -60,17 +56,16 @@ jobs:
           EOF
           fi
           mv .poggit.yml /tmp/.poggit.yml
+          git checkout origin/main -- LICENSE
+          mv LICENSE /tmp/LICENSE
           git rm -fr .
           git clean -dxff
           mv /tmp/.poggit.yml .poggit.yml
-      - name: Restore LICENSE file
-        run: cp /tmp/LICENSE LICENSE
+          mv /tmp/LICENSE LICENSE
       - name: Create commit
         run: |
           cp ${{steps.pharynx.outputs.output-phar}} DiscordChatBridge.phar
           cp -r ${{steps.pharynx.outputs.output-dir}}/* .
-          cp /tmp/LICENSE LICENSE
-          git add -f LICENSE
           git add -A
           git \
             -c user.name="github-actions[bot]" \

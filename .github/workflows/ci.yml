@@ -1,7 +1,9 @@
 name: CI
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - main
+  pull_request:
 jobs:
   build-php:
     name: Prepare PHP
@@ -40,7 +42,6 @@ jobs:
         with:
           additional-assets: |
             assets/icon.png
-          args: -f LICENSE
 
       - name: Setup staging branch
         run: |
@@ -60,10 +61,14 @@ jobs:
           git rm -fr .
           git clean -dxff
           mv /tmp/.poggit.yml .poggit.yml
+      - name: Restore LICENSE file
+        run: cp LICENSE /tmp/LICENSE
       - name: Create commit
         run: |
           cp ${{steps.pharynx.outputs.output-phar}} DiscordChatBridge.phar
           cp -r ${{steps.pharynx.outputs.output-dir}}/* .
+          cp /tmp/LICENSE LICENSE
+          git add -f LICENSE
           git add -A
           git \
             -c user.name="github-actions[bot]" \

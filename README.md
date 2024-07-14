@@ -7,7 +7,7 @@
 <h3 align="center">DiscordChatBridge</h4>
 
 <p align="center">
-💬 A PocketMine-MP plugins which is a chat bridge between minecraft be and discord.
+💬 A PocketMine-MP plugins which is a chat bridge between Minecraft BE and Discord without Bot.
 
 [![State](https://poggit.pmmp.io/shield.state/DiscordChatBridge)](https://poggit.pmmp.io/p/DiscordChatBridge) [![API](https://poggit.pmmp.io/shield.api/DiscordChatBridge)](https://poggit.pmmp.io/p/DiscordChatBridge) [![Total Downloads](https://poggit.pmmp.io/shield.dl.total/DiscordChatBridge)](https://poggit.pmmp.io/p/DiscordChatBridge) [![GitHub License](https://img.shields.io/github/license/nicholass003/DiscordChatBridge)](LICENSE) [![Discord](https://img.shields.io/discord/1230982180742631457?logo=discord&logoColor=white&color=5865F2)](https://discord.gg/EEJK2vxtCp) 
 

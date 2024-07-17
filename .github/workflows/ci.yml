@@ -56,11 +56,9 @@ jobs:
           EOF
           fi
           mv .poggit.yml /tmp/.poggit.yml
-          mv LICENSE /tmp/LICENSE
-          git rm -fr .
+          find . -path './LICENSE' -prune -o -exec rm -rf {} \;
           git clean -dxff
           mv /tmp/.poggit.yml .poggit.yml
-          mv /tmp/LICENSE LICENSE
       - name: Create commit
         run: |
           cp ${{steps.pharynx.outputs.output-phar}} DiscordChatBridge.phar

@@ -1,4 +1,1 @@
-branches:
-  - poggit/main
-projects:
-  DiscordChatBridge: {}
+{"projects":{"DiscordChatBridge":{"path":".","lint":false}}}

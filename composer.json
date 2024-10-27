@@ -4,7 +4,8 @@
     "type": "project",
     "license": "LGPL-3.0",
     "require": {
-        "pocketmine/pocketmine-mp": "^5.0.0"
+        "pocketmine/pocketmine-mp": "^5.0.0",
+        "sof3/infoapi": "dev-master"
     },
     "require-dev": {
         "sof3/pharynx": "^0.3.6"

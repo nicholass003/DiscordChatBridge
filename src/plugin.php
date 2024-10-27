@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace nicholass003\DiscordChatBridge;
 
+use nicholass003\DiscordChatBridge\utils\Utils;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\plugin\PluginBase;
@@ -33,10 +34,10 @@ use pocketmine\Server;
 use pocketmine\utils\InternetException;
 use pocketmine\utils\InternetRequestResult;
 use pocketmine\utils\SingletonTrait;
+use SOFe\InfoAPI\InfoAPI;
 use function json_decode;
 use function json_encode;
 use function str_contains;
-use function str_replace;
 use const CURLOPT_AUTOREFERER;
 use const CURLOPT_FOLLOWLOCATION;
 use const CURLOPT_HTTPHEADER;
@@ -54,13 +55,17 @@ final class DiscordChatBridge extends PluginBase implements Listener{
 	private const AUTHORIZATION = 'authorization';
 	private const WEBHOOK_NAME = 'webhook-name';
 
+	protected function onLoad() : void{
+		$this->saveDefaultConfig();
+	}
+
 	protected function onEnable() : void{
 		self::setInstance($this);
 		self::$discordData = [
 			self::WEBHOOK_URL => $this->getConfig()->get(self::WEBHOOK_URL),
 			self::CHANNEL_ID => $this->getConfig()->get(self::CHANNEL_ID),
 			self::AUTHORIZATION => $this->getConfig()->get(self::AUTHORIZATION),
-			self::WEBHOOK_NAME => str_replace(" ", "_", $this->getConfig()->get(self::WEBHOOK_NAME))
+			self::WEBHOOK_NAME => Utils::renderSpaceToUnderscore($this->getConfig()->get(self::WEBHOOK_NAME))
 		];
 
 		$configured = true;
@@ -86,7 +91,9 @@ final class DiscordChatBridge extends PluginBase implements Listener{
 
 	public static function sendLog(string $message) : void{
 		$data = [
-			'content' => str_replace("@", "@​", $message),
+			'content' => InfoAPI::render(DiscordChatBridge::getInstance(), $message, [
+				"@", "@​"
+			]),
 		];
 		Server::getInstance()->getAsyncPool()->submitTask(new BulkCurlTask(
 			[
@@ -133,10 +140,12 @@ final class DiscordChatBridge extends PluginBase implements Listener{
 					]
 				)
 			], function(array $results) : void{
+				$plugin = DiscordChatBridge::getInstance();
+
 				$result = $results[0];
 				/** @var InternetRequestResult|InternetException $result*/
 				if($result instanceof InternetException){
-					DiscordChatBridge::getInstance()->getLogger()->error($result->getMessage());
+					$plugin->getLogger()->error($result->getMessage());
 					return;
 				}
 
@@ -144,13 +153,16 @@ final class DiscordChatBridge extends PluginBase implements Listener{
 
 				$data = json_decode($result, true);
 
-				if(isset(self::$timestamp[0]) && self::$timestamp[0] === $data[0]['timestamp'] || str_replace(" ", "_", $data[0]['author']['username']) === self::$discordData[self::WEBHOOK_NAME]){
+				if(isset(self::$timestamp[0]) && self::$timestamp[0] === $data[0]['timestamp'] || Utils::renderSpaceToUnderscore($data[0]['author']['username']) === self::$discordData[self::WEBHOOK_NAME]){
 					return;
 				}
 
 				self::$timestamp[0] = $data[0]['timestamp'];
 
-				$message = str_replace(["{name}", "{message}"], [str_replace(" ", "_", $data[0]['author']['username']), (string) $data[0]['content']], DiscordChatBridge::getInstance()->getConfig()->get("bc-message", "[Discord] {name} > {message}"));
+				$message = InfoAPI::render($plugin, $plugin->getConfig()->get("bc-message", "[Discord] {name} > {message}"), [
+					"name" => Utils::renderSpaceToUnderscore($data[0]['author']['username']),
+					"message" => (string) $data[0]['content']
+				]);
 				Server::getInstance()->broadcastMessage($message);
 			}
 		));
